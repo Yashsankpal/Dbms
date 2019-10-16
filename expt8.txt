@@ -1,0 +1,147 @@
+120
+
+create or replace function yash(y int) 
+returns int as 
+$$
+declare
+x int;
+begin
+x:=1;
+while y>0 loop
+	x=y*x;
+
+	y:=y-1;
+end loop;
+return x;
+end; 
+
+$$  
+language plpgsql;
+
+select yash(5);
+
+----------------------------------------------------------
+create or replace function trig1()
+returns trigger as
+$$
+begin
+raise notice 'no data manupulation';
+return null;
+end
+$$
+language plpgsql;
+
+create trigger trig1
+before delete on emp
+for each row 
+execute procedure trig1();
+
+Query returned successfully with no result in 81 msec.
+--------------------------------------------------------------
+create or replace function trig1()
+returns trigger as
+$$
+begin
+raise notice 'insert data manupulation';
+return null;
+end
+$$
+language plpgsql;
+
+create trigger trig1
+before insert on emp
+for each row 
+execute procedure trig1();
+
+Query returned successfully with no result in 81 msec.
+--------------------------------------------------------------
+create or replace function trig1()
+returns trigger as
+$$
+begin
+raise notice 'update data manupulation';
+return null;
+end
+$$
+language plpgsql;
+
+create trigger trig1
+before update on emp
+for each row 
+execute procedure trig1();
+
+Query returned successfully with no result in 81 msec.
+----------------------------------------------------------------------
+create or replace function trig2()
+returns trigger as
+$$
+begin
+insert into emp(id,name,salary) values(new.id,new.name,new.salary);
+return new;
+end
+$$
+language plpgsql;
+
+create trigger trig3
+after insert on emp
+for each row
+execute procedure trig2();
+
+Query returned successfully with no result in 81 msec.
+----------------------------------------------------------------
+create or replace function trig2()
+returns trigger as
+$$
+begin
+delete from emp where salary>5000.00;
+return new;
+end
+$$
+language plpgsql;
+
+create trigger trig3
+after delete on emp
+for each row
+execute procedure trig2();
+
+Query returned successfully with no result in 81 msec.
+------------------------------------------------------------------
+create or replace function trig2()
+returns trigger as
+$$
+begin
+update emp set name="flash" ,salary=5999.99;
+return new;
+end
+$$
+language plpgsql;
+
+create trigger trig3
+after update on emp
+for each row
+execute procedure trig2();
+---------------------------------------------------------------------
+do
+$$
+declare
+emp_r emp%rowtype;
+emp_c cursor for select * from emp;
+begin
+open emp_c;
+loop
+fetch emp_c into emp_r;
+exit when not found;
+if emp_r.salary>500000 then
+raise notice '%',emp_r.id;
+raise notice '%',emp_r.name;
+raise notice '%',emp_r.salary;
+end if;
+end loop;
+close emp_c;
+end;
+$$
+language plpgsql;
+
+Query returned successfully with no result in 36 msec.
+
+

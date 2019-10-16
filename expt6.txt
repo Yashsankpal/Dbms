@@ -1,0 +1,66 @@
+create table company1(
+    id numeric(5),
+    name varchar(20) not null,
+    age numeric(10) not null,
+    address varchar(50),
+    salary numeric(10,3)
+);
+
+insert into company1 values(12, NULL, NULL, 'abc', 132.456);
+insert into company1 values(15, NULL, NULL, "asd", 302.628);
+ERROR:  null value in column "name" violates not-null constraint
+DETAIL:  Failing row contains (12, null, null, abc, 132.456).
+
+create table company3(
+    id numeric(5) not null,
+    name varchar(20) not null,
+    age numeric(10) unique,
+    address varchar(50),
+    salary numeric(10,3)
+);
+
+insert into company3 values(12, 'Yash', 20, 'abc', 132.456);
+insert into company3 values(15, 'ABC', 20, 'asd', 302.628);
+1 row(s) inserted.
+ERROR:  duplicate key value violates unique constraint "company3_age_key"
+DETAIL:  Key (age)=(20) already exists.
+
+create table company4(
+    id numeric(5) primary key,
+    name varchar(20),
+    age numeric(10),
+    address varchar(50),
+    salary numeric(10,3)
+);
+
+insert into company4 values(12, 'Yash', 20, 'abc', 132.456);
+insert into company4 values(12, 'ABC', 21, 'asd', 302.628);
+1 row(s) inserted.
+ERROR:  duplicate key value violates unique constraint "company4_pkey"
+DETAIL:  Key (id)=(12) already exists.
+
+create table employee(
+    id numeric(5) primary key,
+    name varchar(20),
+    age numeric(10),
+    address varchar(50),
+    salary numeric(10,3)
+);
+create table department(
+    id numeric(5) primary key,
+    name varchar(50) not null,
+    emp_id numeric(5) references employee(id)
+);
+
+insert into employee values(1, 'Yash', 20, 'abc', 132.456);
+insert into employee values(2, 'ABC', 21, 'asd', 302.628);
+
+create table company5(
+    id numeric(5),
+    name varchar(20),
+    age numeric(10),
+    address varchar(50),
+    salary numeric(10,3) check (salary > 0)
+);
+
+insert into employee values(197, 'Yash', 20, 'abc', -132.456);

@@ -1,0 +1,52 @@
+create table sales_order ( 
+    order_no varchar(6), 
+    order_date date, 
+    client_no varchar(6), 
+    dely_addr varchar(25), 
+    salesman_no varchar(6), 
+    dely_type char(1), 
+    billed_yn char(1), 
+    dely_date date, 
+    order_status varchar(10) 
+);
+
+insert into sales_order VALUES('O001', to_date('01-05-2019', 'dd/mm/yyyy'), 'C001', 'Mumbai', 'S001', 'A', 'Y', to_date('01-06-2019', 'dd/mm/yyyy'), 'PACKED');
+insert into sales_order VALUES('O002', to_date('01-10-2018', 'dd/mm/yyyy'), 'C002', 'Bangalore', 'S010', 'B', 'Y', to_date('23-10-2018', 'dd/mm/yyyy'), 'SHIPPED');
+insert into sales_order VALUES('O003', to_date('30-09-2016', 'dd/mm/yyyy'), 'C003', 'Delhi', 'S005', 'D', 'N', to_date('15-09-2016', 'dd/mm/yyyy'), 'OUT_DELIV');
+insert into sales_order VALUES('O004', to_date('26-01-2012', 'dd/mm/yyyy'), 'C004', 'Mumbai', 'S008', 'A', 'N', to_date('12-01-2012', 'dd/mm/yyyy'), 'PACKED');
+insert into sales_order VALUES('O005', to_date('10-03-2019', 'dd/mm/yyyy'), 'C005', 'Mumbai', 'S056', 'A', 'Y', to_date('26-02-2019', 'dd/mm/yyyy'), 'PLACED');
+
+select Client_name from client_master where Client_name like '_a%';
+
+select Client_name from client_master where City like '_a%';
+
+select Client_name from client_master where City = 'mumbai' order by Client_name;
+
+select Client_name from client_master where Bal_due > 10000;
+
+select * from sales_order where to_char(order_date, 'dd/mm/yyyy') LIKE '__/01/____';
+
+select * from sales_order where client_no = 'C001' OR client_no = 'C002';
+
+select * from Product_master where Sell_price >= 2000 AND Sell_price <= 5000;
+
+update Product_master SET Sell_price = Sell_price * 1.5 where Sell_price >= 1500;
+ALTER TABLE Product_master RENAME COLUMN Sell_price TO new_price;
+
+select count(*) from sales_order;
+
+select avg(new_price) as Average_Selling_Price from Product_master;
+
+select min(new_price) as Min_Product_Selling_Price, max(new_price) as Max_Product_Selling_Price from Product_master;
+
+select count(new_price) from Product_master where new_price >= 1500;
+
+select order_no, to_char(order_date, 'dd') as Order_day from sales_order;
+
+select to_char(order_date, 'dd-month-yyyy') as Order_Date from sales_order;
+
+select to_char(dely_date, 'month dd') as Delivery_Date from sales_order;
+
+select (CURRENT_DATE + 15) as FIfteen_Days_From_Now;
+
+select CURRENT_DATE - dely_date AS DateDiff FROM sales_order;

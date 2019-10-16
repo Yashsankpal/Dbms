@@ -1,0 +1,69 @@
+//Create Table
+create table Student(
+	id numeric(3),
+	name varchar(3),
+	address varchar(20),
+	department varchar(20),
+	marks numeric(3)
+);
+
+Query returned successfully: one row affected, 15 ms execution time.
+
+//Insert values
+insert into Student values(10, 'Yash', 'cabc', 'IT', 99);
+insert into Student values(11, 'Dhrumil', 'cvb', 'IT', 80);
+insert into Student values(12, 'Hritik', 'we', 'IT', 88);
+insert into Student values(13, 'Kam', 'kj', 'CS', 05);
+insert into Student values(14, 'Ka', 'iro', 'IT', 65);
+insert into Student values(15, 'Ra', 'qa', 'IT', 82);
+insert into Student values(16, 'qa', 'lkj', 'CS', 62);
+insert into Student values(17, 'kl', 'asd', 'IT', 67);
+insert into Student values(18, 'vb', 'da', 'CS', 41);
+insert into Student values(19, 'df', 'ibm', 'CS', 95);
+
+Query returned successfully: one row affected, 11 ms execution time.
+
+create view view1 as
+select id, name, marks from Student;
+
+Query returned successfully with no result in 26 ms.
+
+
+create view view2 as
+select * from Student where marks > 70;
+
+Query returned successfully with no result in 41 ms.
+
+create view view3 as
+select id, name, department, marks
+from Student where marks < 50;
+
+Query returned successfully with no result in 21 ms.
+
+create view view4 as
+select id, name, marks from Student;
+
+Query returned successfully with no result in 29 ms.
+
+create view view5 as
+select * from Student where department LIKE 'CS';
+
+Query returned successfully with no result in 26 ms.
+
+create view view6 as
+select id, name, address from Student where department LIKE 'IT' OR department LIKE 'CS';
+
+Query returned successfully with no result in 16 ms.
+
+update view1 set marks = 50 where id = 12;
+
+ERROR:  cannot update view "view1"
+HINT:  You need an unconditional ON UPDATE DO INSTEAD rule or an INSTEAD OF UPDATE trigger.
+
+select * from view1;
+
+Total query runtime: 12 ms.
+11 rows retrieved.
+
+drop view view6;
+Query returned successfully with no result in 11 ms.

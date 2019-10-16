@@ -1,0 +1,77 @@
+DO 
+$$
+DECLARE
+	x int;
+	y int;
+	a int;
+	b int;
+BEGIN 
+	x:=0;
+	y:=1;
+	a:=0;
+	WHILE a<10 LOOP
+		raise notice '%',x;	
+		b:=x;
+		x:=y;
+		y:=b+y;
+		
+		a:=a+1;
+	END LOOP;
+END$$
+
+NOTICE:  0
+NOTICE:  1
+NOTICE:  1
+NOTICE:  2
+NOTICE:  3
+NOTICE:  5
+NOTICE:  8
+NOTICE:  13
+NOTICE:  21
+NOTICE:  34
+Query returned successfully with no result in 111 msec.
+
+DO 
+$$
+DECLARE
+	x int;
+	y int;
+	a int;
+BEGIN
+a=153;
+y:=0;
+	WHILE a!=0 LOOP
+		x:=a%10;
+		a:=a/10;
+		y:=y+x;
+	END LOOP;
+raise notice '%',y;
+END$$
+
+NOTICE:  9
+Query returned successfully with no result in 27 msec.
+
+DO 
+$$
+DECLARE
+	x int;
+	BEGIN
+	FOR i IN 1 .. 10 LOOP
+		x:=i*i;
+		raise notice '%',x;
+	END LOOP;
+END$$
+
+NOTICE:  1
+NOTICE:  4
+NOTICE:  9
+NOTICE:  16
+NOTICE:  25
+NOTICE:  36
+NOTICE:  49
+NOTICE:  64
+NOTICE:  81
+NOTICE:  100
+Query returned successfully with no result in 133 msec.
+
+

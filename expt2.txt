@@ -1,0 +1,27 @@
+create table Employee(empno numeric(4), ename varchar(20), designation varchar(20), salary numeric(8,2) );
+Query returned successfully with no result in 162 ms.
+
+
+alter table Employee alter empno type numeric(6);
+Query returned successfully with no result in 12 ms.
+
+alter table Employee alter empno type numeric(10), alter ename type varchar(15);
+Query returned successfully with no result in 11 ms.
+
+alter table Employee Add qualification varchar(6);
+Query returned successfully with no result in 12 ms.
+
+alter table Employee Add dob date, Add doj date;
+Query returned successfully with no result in 12 ms.
+
+alter table Employee DROP column doj;
+Query returned successfully with no result in 11 ms.
+
+alter table Employee DROP column dob, DROP column qualification;
+Query returned successfully with no result in 15 ms.
+
+truncate table Employee;
+Query returned successfully with no result in 12 ms.
+
+DROP table Employee;
+Query returned successfully with no result in 16 ms.

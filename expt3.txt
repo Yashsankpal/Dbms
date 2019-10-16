@@ -1,0 +1,52 @@
+create table client_master(
+	Client_no varchar(6),
+	Client_name varchar(20),
+	Address varchar(30),
+	City varchar(15),
+	Pincode numeric(8),
+	State varchar(15),
+	Bal_due numeric(10,2)	
+);
+
+create table Product_master(
+	product_no varchar(6),
+	description varchar(15),
+	Profit_percent numeric(4,2),
+	Unit_measure varchar(10),
+	Qty_on_hand numeric(8),
+	Reorder_level numeric(8),
+	Sell_price numeric(8,2),
+	Cost_price numeric(8,2)
+);
+
+INSERT INTO client_master VALUES('C001', 'Yash', 'Malad', 'Mumbai', 40064, 'Maha', 125);
+INSERT INTO client_master VALUES('C002', 'Flash', 'BHyan', 'Mumbai', 40074, 'Maha', 1250);
+INSERT INTO client_master VALUES('C003', 'Savitar', 'Gaga', 'Mumbai', 40094, 'Maha', 105);
+INSERT INTO client_master VALUES('C004', 'Zoom', 'juhu', 'Mumbai', 40014, 'Tamil Nadu', 505);
+INSERT INTO client_master VALUES('C005', 'Albert','Kandivalli', 'Mumbai', 40065, 'Maha', 625);
+
+INSERT INTO Product_master VALUES('P001', 'Product1', '52.12', 'cm', 20, 10, 6502, 210);
+INSERT INTO Product_master VALUES('P002', 'Product2', '32.56', 'mm', 1500, 50, 1203, 110);
+INSERT INTO Product_master VALUES('P003', 'Product3', '50.89', 'm', 1683, 60, 1500, 105);
+INSERT INTO Product_master VALUES('P004', 'Product4', '60.13', 'km', 89, 20, 8069, 56);
+INSERT INTO Product_master VALUES('P005', 'Product5', '40.07', 'cm', 7625, 30, 230, 10);
+
+select Client_name from client_master;
+
+select * from client_master;
+
+select Client_name, City from client_master;
+
+select description from Product_master;
+
+select client_name from Client_master where Client_master.city = 'Mumbai';
+
+Update Client_master SET city = 'delhi' where client_no = 'C001';
+
+Update Client_master SET bal_due = 1000 where client_no = 'C005';
+
+Update Product_master SET Cost_price = 3000 where description = 'hard disk';
+
+delete from Product_master where Qty_on_hand < 100;
+
+delete from Client_master where State = 'Tamil Nadu';
