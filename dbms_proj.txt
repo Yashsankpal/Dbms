@@ -1,0 +1,213 @@
+									-----DDL COMMANDS-----
+Create table Employee(firstName varchar(10) NOT NULL,Address varchar(10) NOT NULL,Salary numeric(10,2) CHECK Salary>0,Contact_no int,e_id int primary key AUTO INCREMENT);
+Create table Officer(designation varchar(10) NOT NULL,e_id int primary key references Employee(e_id));
+Create table Accountant_no(type_speed int NOT NULL,e_id int primary key references Employee(e_id));
+Create table Receptionist(documentation varchar(20) NOT NULL,e_id int primary key references Employee(e_id));
+
+Create table License(type varchar(10) NOT NULL,expiry_date date NOT NULL,license_no int UNIQUE CONSTRAINT);
+Create table Payment(Date date NOT NULL,pay_id int primary key ,license_no int foreign key references License(license_no));
+Create table Cheque(cheque_no int NOT NULL,pay_id int primary key references Payment(pay_id));
+Create table Cash(receipt_no int NOT NULL,pay_id int primary key references Payment(pay_id));
+Create table UPI(e_receipt_no int NOT NULL,pay_id int primary key references Payment(pay_id));
+Create table Net_bank(account_no int NOT NULL,pay_id int primary key references Payment(pay_id));
+
+Create table Driver(Address varchar(20) NOT NULL,Contact_no int NOT NULL,Addhaar_no int CHECK Addhaar>0,d_id int primary key);
+Create table Vehicle(type varchar(10) NOT NULL,capacity int CHECK capacity>0);
+Create table Insurance(ins_type varchar(10) NOT NULL,ins_period int NOT NULL,ins_amt numeric(10,2) CHECK ins_amt>0,ins_id int primary key);
+
+
+INSERT INTO Employee values('Tony','Stark',150000,9897454131,49);
+INSERT INTO Employee values('Natasha','Romanoff',50000,9987654329,559);
+INSERT INTO Employee values('Steve','Rogers',18999,9895454134,859);
+INSERT INTO Employee values('Barry','Allen',16600,9797894135,451);
+INSERT INTO Employee values('Bruce','Wayne',76600,9794564135,369);
+INSERT INTO Employee values('Peter','Parker',46600,9763294135,229);
+INSERT INTO Employee values('Bruce','Banner',66600,9774694135,359);
+INSERT INTO Employee values('Henry','Cavil',26600,9794614135,139);
+INSERT INTO Employee values('Clark','Kent',40600,9778965135,299);
+
+
+
+INSERT INTO Officer values('HR_HEAD',859);
+INSERT INTO Officer values('TECH_HEAD',49);
+INSERT INTO Officer values('MAN_head',299);
+
+INSERT INTO Accountant values(34,451);
+INSERT INTO Accountant values(40,369);
+INSERT INTO Accountant values(50,139);
+
+INSERT INTO Receptionist values('Rockstar',559);
+INSERT INTO Receptionist values('Hentai',369);
+INSERT INTO Receptionist values('Drama',359);
+
+
+INSERT INTO License values('Dual',to_date('24-12-2000','dd/mm/yyyy'),78945691);
+INSERT INTO License values('Single',to_date('03-10-2000','dd/mm/yyyy'),74521781);
+INSERT INTO License values('Dual',to_date('18-02-2000','dd/mm/yyyy'),77315691);
+INSERT INTO License values('Dual',to_date('27-05-2000','dd/mm/yyyy'),94215501);
+INSERT INTO License values('Single',to_date('06-06-2000','dd/mm/yyyy'),77539501);
+INSERT INTO License values('Dual',to_date('31-11-2000','dd/mm/yyyy'),77128501);
+INSERT INTO License values('Single',to_date('29-07-2000','dd/mm/yyyy'),79328501);
+
+INSERT INTO Payment values(to_date('28-09-2145','dd/mm/yyyy'),987,74521781);
+INSERT INTO Payment values(to_date('24-12-3000','dd/mm/yyyy'),654,77539501);
+INSERT INTO Payment values(to_date('19-12-2000','dd/mm/yyyy'),321,78945691);
+INSERT INTO Payment values(to_date('17-10-2010','dd/mm/yyyy'),756,94215501);
+
+INSERT INTO Cheque values(4563,756);
+INSERT INTO Cash values(7896,321);
+INSERT INTO UPI values(1596,654);
+INSERT INTO Net_bank values(7532,987);
+
+INSERT INTO Driver values('Malad',9876543210,78904501,789);
+INSERT INTO Driver values('Charni',9871473210,78304501,299);
+INSERT INTO Driver values('Thane',9814562210,78154601,389);
+INSERT INTO Driver values('Bhed',9877895210,78974699,959);
+
+INSERT INTO Vehicle values('Four',46);
+INSERT INTO Vehicle values('Three',20);
+INSERT INTO Vehicle values('two',10);
+
+INSERT INTO Insurance values('Mn',3,5000.02);
+INSERT INTO Insurance values('Qu',2,4599.99);
+INSERT INTO Insurance values('Yr',5,6541.78);
+INSERT INTO Insurance values('Mn',10,4123.96);
+
+											-----Joins-----
+
+select * from License  natural joins  License.license_no=Payment.license_no;
+select * from cheque left joins Payment;
+select * from cash right joins Payment;
+select * from UPI cross joins Payment;
+
+											-----Trigger-----
+
+Create Trigger T_1 before delete on Payment
+for each row Execute Procedure Trigg_1();
+
+Create  or Replace function Trigg_1()
+returns trigger as
+$$
+begin
+raise notice 'Deletion not allowed';
+return null;
+end $$
+plpgsql;
+
+Create Trigger T_2 before delete on Employee
+for each row Execute Procedure Trigg_2();
+
+Create  or Replace function Trigg_2()
+returns trigger as
+$$
+begin
+raise notice 'Deletion not allowed';
+return null;
+end $$
+plpgsql;
+
+Create Trigger T_3 before delete on License
+for each row Execute Procedure Trigg_3();
+
+Create  or Replace function Trigg_3()
+returns trigger as
+$$
+begin
+raise notice 'Deletion not allowed';
+return null;
+end $$
+plpgsql;
+			
+											-----DML COMMANDS-----
+			
+update Employee set firstName='Savitar' where e_id=559;
+update Employee set lastName='Moriarty' where e_id=859;
+update Employee set firstName='Thanos' where e_id=451;
+update Employee set lastName='Quinn' where e_id=229;
+
+											-----CURSORS-----
+
+do
+$$
+Declare
+CUR1 cursor for select * from Employee;
+emp Employee%ROWTYPE;
+Begin
+open CUR1;
+Loop
+Fetch CUR1 into emp;
+exit when not found
+raise notice '%',firstName;
+end loop
+end$$
+plpgsql;
+
+												-----AGGREGATE FUNCTIONS-----
+
+Select max(Salary) from Employee;
+Select min(Salary) from Employee;
+Select count(*) from Cheque;
+Select count(*) from Cash;
+Select count(*) from UPI;
+Select count(*) from Net_bank;
+
+											-----VIEWS-----
+
+    Views
+Create view emp_view AS
+    Select * From Employee;
+Create view pay_view As
+    Select * from Payment;
+Create view drive_view As
+    Select * from Driver;
+Create view veh_view As
+    Select * from Vehicle;
+
+											-----FUNCTIONS-----
+
+Create or Replace Procedure D()
+  As
+  $$
+    Declare
+        add Driver%ROWTYPE;
+    Begin
+        Select * from Driver where Address='Malad' into add ;
+        raise notice '%',add.addhaar;
+        raise notice '%',add.Address;
+  END$$;
+plpgsql;
+
+SELECT D();
+
+Create or Replace Procedure E()
+  As
+  $$
+    Declare
+        emp Employee%ROWTYPE;
+    Begin
+        Select * from Employee where Address='Stark' into emp;
+        raise notice '%',emp.firstName;
+        raise notice '%',emp.Address;
+  END$$;
+plpgsql;
+
+SELECT E();
+
+
+--- Nested Queries ---
+
+select * from License where license_no in (select license_no from Cheque);
+select * from License where license_no in (select license_no from Cash);
+select * from License where license_no in (select license_no from UPI);  
+
+
+--- Block ---
+do
+$$
+declare
+emp Employee%ROWTYPE;
+begin
+select * into emp from Employee;
+dbms_output.put_line('E_id: '||emp.e_id||',Name: '||emp.firstName||',Address: '||emp.Address||',Contact_no: '||emp.Contact_no||',Salary: '||emp.Salary);
+END;
+
