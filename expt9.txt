@@ -1,0 +1,135 @@
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const nodemailer = require("nodemailer");
+const cors = require('cors')({origin: true});
+require("dotenv").config();
+
+
+admin.initializeApp({projectId: 'oyebeauty-1'});
+const db = admin.firestore();
+
+
+// better approach
+exports.ServicePostFunc = functions.https.onRequest(async (req,res)=>{
+    // console.log(req.body);
+    const services = ['Air Conditioner Services','Home cleaning Services','Carpentery services','Plumbing services','Electrical services','Painting services','Pest Control services','Washing Machine Repair','Refrigerator Repair Service','Microwave Repair','RO Service','LED TV Repair','AC Services','AC Installation','Sofa cleaning services','Salon for woman All services','Salon']
+    
+    const body = req.body
+    console.log(body);
+
+    if(!services.includes(body.id)){
+        const database = db.collection('service')
+
+        const uid = new Date().toISOString()
+       
+        database.doc(uid).set(body);
+    }else{
+        const catId = body.id
+        const database = db.collection('service').doc(catId)
+        delete body.id;
+    
+        const catData = {
+            "catId":catId,
+            ...body
+        }
+        const uid = new Date().toISOString().replace('.','-')
+        database.get()
+            .then((snap)=>{
+                if(snap.exists){
+                        database.update({[uid]:catData}) 
+                    }else{
+                        database.set({[uid]:catData})
+                }
+            })  
+    }
+    res.send({"message":"Posted successfully "})
+})
+
+// Remove this when servicepostfunc working properly 
+exports.IncrementID =  functions.firestore.document('service/{document}')
+    .onCreate(async(snap,context)=>{
+        const data = snap.data();
+        const services = ['Air Conditioner Services','Home cleaning Services','Carpentery services','Plumbing services','Electrical services','Painting services','Pest Control services','Washing Machine Repair','Refrigerator Repair Service','Microwave Repair','RO Service','LED TV Repair','AC Services','AC Installation','Sofa cleaning services','Salon for woman All services','Salon']
+
+        if(!services.includes(data.id)){
+            if(!isNumeric(context.params.document) && !isTimestamp(context.params.document) && !services.includes(context.params.document)){
+                await autoIncrement(snap.data(),context.params.document);
+            }
+        }else{
+            if(!isNumeric(context.params.document)){
+                await sortIntoCat(snap.data(),context.params.document);
+            }
+        }
+
+        return null;
+    })
+    
+    
+
+    async function autoIncrement(data,context) {
+        
+        const database = db.collection('service')
+        database.doc(context).delete();
+        
+        const uid = new Date().toISOString()
+        
+        database.doc(uid).set(data);
+        return uid;
+    }
+    
+// Dont remove this 
+function isTimestamp(value) {
+    return new Date(value).getTime() > 0;
+}
+function isNumeric(value) {
+    return /^-?\d+$/.test(value);
+}
+
+
+// // MAIL FUNCTION
+exports.SendEmail = functions.firestore.document('{collection}/{document}')
+    .onCreate((snap,context)=>{
+        // console.log(JSON.stringify(snap.data()));
+        if(isTimestamp(context.params.document) || isNumeric(context.params.document))
+        {
+            SendEmail(snap.data(),context.params.document);
+        }
+        return null;
+    });
+
+exports.SendEmailForServiceCat = functions.firestore.document('service/{document}')
+    .onUpdate((change,context)=>{
+        // console.log(context.params);
+        // console.log(change.before.data());
+        const bef = change.before.data()
+        // console.log(change.after.data());
+        const aft = change.after.data()
+
+        let diff = Object.keys(aft).filter(key => !Object.keys(bef).includes(key))
+        
+        SendEmail(aft[diff[0]],diff[0]);
+        return null;
+    }
+    )    
+
+function SendEmail(data,context) {
+    const {SENDER_EMAIL,SENDER_PASSWORD,RECEIVER_EMAIL}= process.env;
+    // console.log(SENDER_EMAIL);
+    // console.log(SENDER_PASSWORD);
+    let authData = nodemailer.createTransport({
+        service:'gmail',
+        auth:{
+            user:SENDER_EMAIL,
+            pass:SENDER_PASSWORD
+        }
+    });
+
+    authData.sendMail({
+        from:SENDER_EMAIL,
+        to:RECEIVER_EMAIL,
+        subject:'New '+context+ ' Added',
+        text:JSON.stringify(data),
+
+    }).then(res=>console.log(`Successfull sent mail of ID ${context} to `+RECEIVER_EMAIL)).catch(err=>console.log(err));
+    
+}
